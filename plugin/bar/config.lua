@@ -81,7 +81,7 @@ M.options = {
     },
     leader = {
       enabled = true,
-      icon = wez.nerdfonts.oct_rocket,
+      icon = wez.nerdfonts.md_cat,
       color = 2,
     },
     zoom = {

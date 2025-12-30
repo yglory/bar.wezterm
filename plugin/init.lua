@@ -18,20 +18,20 @@ end
 ---returns the name of the package, used when requiring modules
 ---@return string
 local function get_require_path()
-  local path = "httpssCssZssZsgithubsDscomsZsadriankarlensZsbarsDswezterm"
-  local path_trailing_slash = "httpssCssZssZsgithubsDscomsZsadriankarlensZsbarsDsweztermsZs"
+  local path = "httpssCssZssZsgithubsDscomsZsyglorysZsbarsDswezterm"
+  local path_trailing_slash = "httpssCssZssZsgithubsDscomsZsyglorysZsbarsDsweztermsZs"
   return directory_exists(path_trailing_slash) and path_trailing_slash or path
 end
 
 package.path = package.path
-  .. ";"
-  .. plugin_dir
-  .. separator
-  .. get_require_path()
-  .. separator
-  .. "plugin"
-  .. separator
-  .. "?.lua"
+    .. ";"
+    .. plugin_dir
+    .. separator
+    .. get_require_path()
+    .. separator
+    .. "plugin"
+    .. separator
+    .. "?.lua"
 
 local utilities = require "bar.utilities"
 local config = require "bar.config"
@@ -39,6 +39,7 @@ local tabs = require "bar.tabs"
 local user = require "bar.user"
 local spotify = require "bar.spotify"
 local paths = require "bar.paths"
+local leader = require "bar.leader"
 
 ---conforming to https://github.com/wez/wezterm/commit/e4ae8a844d8feaa43e1de34c5cc8b4f07ce525dd
 ---@param c table: wezterm config object
@@ -90,8 +91,8 @@ wez.on("format-tab-title", function(tab, _, _, conf, _, _)
   local index = tab.tab_index + 1
   local offset = #tostring(index) + #options.separator.left_icon + (2 * options.separator.space) + 2
   local title = index
-    .. utilities._space(options.separator.left_icon, options.separator.space, nil)
-    .. tabs.get_title(tab)
+      .. utilities._space(options.separator.left_icon, options.separator.space, nil)
+      .. tabs.get_title(tab)
 
   local width = conf.tab_max_width - offset
   if #title > conf.tab_max_width then
@@ -127,14 +128,17 @@ wez.on("update-status", function(window, pane)
 
   table.insert(left_cells, { Text = string.rep(" ", options.padding.left) })
 
+  if options.modules.leader.enabled then
+    local leader_stat = leader.get_status(window, options)
+    if #leader_stat > 0 then
+      table.insert(left_cells, { Foreground = { Color = palette.ansi[options.modules.leader.color] } })
+      table.insert(left_cells, { Text = leader_stat })
+    end
+  end
+
   if options.modules.workspace.enabled then
     local stat = options.modules.workspace.icon .. utilities._space(window:active_workspace(), options.separator.space)
     local stat_fg = palette.ansi[options.modules.workspace.color]
-
-    if options.modules.leader.enabled and window:leader_is_active() then
-      stat_fg = palette.ansi[options.modules.leader.color]
-      stat = utilities._constant_width(stat, options.modules.leader.icon)
-    end
 
     table.insert(left_cells, { Foreground = { Color = stat_fg } })
     table.insert(left_cells, { Text = stat })
@@ -219,7 +223,7 @@ wez.on("update-status", function(window, pane)
       table.insert(right_cells, { Foreground = { Color = palette.brights[1] } })
       table.insert(right_cells, {
         Text = utilities._space(options.separator.right_icon, options.separator.space, nil)
-          .. options.modules[name].icon,
+            .. options.modules[name].icon,
       })
       table.insert(right_cells, { Text = utilities._space(options.separator.field_icon, options.separator.space, nil) })
     end

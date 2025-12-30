@@ -10,7 +10,7 @@ local M = {}
 ---@return string
 M.get_status = function(window, options)
     if window:leader_is_active() then
-        return options.modules.leader.icon .. utilities._space("leader", options.separator.space)
+        return options.modules.leader.icon .. utilities._space("", options.separator.space)
     end
     return ""
 end

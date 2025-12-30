@@ -27,10 +27,16 @@ local M = {}
 ---@class option.clock : option.module
 ---@field format string
 
+---@class option.key_table : option.module
+---@field show_normal boolean
+---@field normal_name string
+---@field mode_names table
+
 ---@class option.modules
 ---@field tabs option.tabs
 ---@field workspace option.module
 ---@field leader option.module
+---@field key_table option.key_table
 ---@field pane option.module
 ---@field username option.module
 ---@field hostname option.module
@@ -83,6 +89,14 @@ M.options = {
       enabled = true,
       icon = wez.nerdfonts.md_cat,
       color = 2,
+    },
+    key_table = {
+      enabled = true,
+      icon = "",
+      color = 3,
+      show_normal = false, -- whether to show "NORMAL" when no key table is active
+      normal_name = "NORMAL",
+      mode_names = {},     -- user can override default mappings here
     },
     zoom = {
       enabled = false,

@@ -40,6 +40,7 @@ local user = require "bar.user"
 local spotify = require "bar.spotify"
 local paths = require "bar.paths"
 local leader = require "bar.leader"
+local key_table = require "bar.key_table"
 
 ---conforming to https://github.com/wez/wezterm/commit/e4ae8a844d8feaa43e1de34c5cc8b4f07ce525dd
 ---@param c table: wezterm config object
@@ -127,6 +128,17 @@ wez.on("update-status", function(window, pane)
   }
 
   table.insert(left_cells, { Text = string.rep(" ", options.padding.left) })
+
+  if options.modules.key_table.enabled then
+    local key_table_stat = key_table.get_status(window, options)
+    if #key_table_stat > 0 then
+      table.insert(left_cells, { Foreground = { Color = palette.ansi[options.modules.key_table.color] } })
+      table.insert(
+        left_cells,
+        { Text = options.modules.key_table.icon .. utilities._space(key_table_stat, options.separator.space) }
+      )
+    end
+  end
 
   if options.modules.leader.enabled then
     local leader_stat = leader.get_status(window, options)
